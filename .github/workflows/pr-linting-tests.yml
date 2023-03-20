@@ -1,0 +1,37 @@
+name: PR Linting and Tests
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    #Run this workflow when a PR is opened/reopened/synchronized on main branch
+    branches:
+      - main
+      - staging
+
+jobs:
+  Format-Lint-UnitTest:
+    runs-on: ubuntu-latest
+    steps:
+      #Checkout Code
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Use Node.js v16.14.0
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.14.0
+          cache: 'yarn'
+
+      #--prefer-offline tells yarn to use cached downloads (in the cache directory mentioned above) during installation whenever possible instead of downloading from the server.
+      - name: Install Dependencies
+        run: yarn --prefer-offline
+
+      #Check Code Format
+      - name: Check Format
+        run: yarn run check:format
+
+      #Run lint to check code quality
+      - name: Run lint
+        run: yarn run lint

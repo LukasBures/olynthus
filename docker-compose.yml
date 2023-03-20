@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  clickhouse-int-db:
+    image: clickhouse/clickhouse-server
+    restart: always
+    environment:
+      - CLICKHOUSE_USER=testuser
+      - CLICKHOUSE_PASSWORD=testpassword
+    ports:
+      - '8124:8123'
+    volumes:
+      - /var/lib/clickhouse/
+      - /val/log/clickhouse-server/
+
+volumes:
+  dev_int_db:
+    driver: local

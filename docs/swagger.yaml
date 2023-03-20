@@ -1,0 +1,1018 @@
+openapi: 3.0.3
+info:
+  title: Safeguarding APIs
+  version: '0.1.0'
+  description: This is the suite of APIs for scanning transaction data prior to signing
+  license:
+    name: Arda
+    url: 'https://www.arda.finance'
+  contact:
+    name: Arda Support
+    email: engineering@arda.finance
+    url: 'https://www.arda.finance'
+servers:
+  - url: 'http://localhost:4004'
+tags:
+  - name: Risk Profiling
+    description: APIs for Risk Profile information
+paths:
+  /api/v1/chains/{name}/transactions/risk-profiles:
+    post:
+      tags:
+        - Risk Profiling
+      operationId: get-transaction-risk-profiles
+      summary: Get Transaction Risk Profiles
+      description: Returns the risk profiles in the transaction prior to signing
+      parameters:
+        - name: name
+          description: The name of the Blockchain (must be in UPPERCASE). Supports ETHEREUM, POLYGON, and BSC
+          in: path
+          required: true
+          schema:
+            type: string
+            example: ETHEREUM
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionRiskProfilesRequest'
+            examples:
+              example-1:
+                value:
+                  transaction:
+                    from: '0xb5BD917bc25F412D029cB2Ab791bff6cD78FD1AC'
+                    to: '0xD533a949740bb3306d119CC777fa900bA034cd52'
+                    value: 0
+                    data: '0x095ea7b3000000000000000000000000b5bd917bc25f412d029cb2ab791bff6cd78fd1acffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
+                    gas: '194255'
+                    gas_price: '8395943294'
+                  metadata:
+                    url: 'https://app.uniswap.com'
+      responses:
+        '200':
+          description: TransactionRiskProfiles object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionRiskProfiles'
+              examples:
+                example-1:
+                  value:
+                    chain: ETHEREUM
+                    network: MAINNET
+                    tx_type: ERC20_APPROVAL
+                    counterparty_details:
+                      name: Curve DAO Token (CRV)
+                    simulation:
+                      status: SUCCESS
+                      balances:
+                        - before:
+                            value: 1.9034
+                            token: ETH
+                          after:
+                            value: 1.9034
+                            token: ETH
+                        - before:
+                            value: 100.2332
+                            token: CRV
+                          after:
+                            value: 100.2332
+                            token: CRV
+                    risk_profiles:
+                      summary:
+                        result: BLOCK
+                        counts:
+                          - risk_profile_type: LOW
+                            count: 0
+                          - risk_profile_type: MEDIUM
+                            count: 0
+                          - risk_profile_type: HIGH
+                            count: 1
+                      data:
+                        - risk_profile_type: HIGH
+                          risk_type: LARGE_APPROVAL
+                          text: This transaction asks for a large approval of 115792089237316195423570985008687907853269984665640564039457.584007913129639935 tokens
+                          details:
+                            approvals:
+                              - approval_value: 1.157920892373162e+59
+                                from: '0x8233464Bbe5511BE322C4fC7b2d7A2a2C94ACc86'
+                                token:
+                                  address: '0xD533a949740bb3306d119CC777fa900bA034cd52'
+                                  name: CRV
+                                spender: '0xB188b1CB84Fb0bA13cb9ee1292769F903A9feC59'
+                example-2:
+                  value:
+                    chain: ETHEREUM
+                    network: MAINNET
+                    tx_type: ERC20_TRANSFER
+                    counterparty_details:
+                      name: USD Coin (USDC)
+                    simulation:
+                      status: SUCCESS
+                      balances:
+                        - before:
+                            value: 233.9034
+                            token: USDC
+                          after:
+                            value: 0
+                            token: USDC
+                    risk_profiles:
+                      summary:
+                        result: BLOCK
+                        counts:
+                          - risk_profile_type: LOW
+                            count: 0
+                          - risk_profile_type: MEDIUM
+                            count: 1
+                          - risk_profile_type: HIGH
+                            count: 2
+                      data:
+                        - risk_profile_type: HIGH
+                          risk_type: MALICIOUS_COUNTERPARTY
+                          text: The contract 0x02f51f8377d54776f85b0ca60b790f6df9827122 is an identified malicious counterparty
+                          details:
+                            labels:
+                              - PHISHING
+                            malicious_counterparty:
+                              address: '0x02f51f8377d54776f85b0ca60b790f6df9827122'
+                              type: CONTRACT
+                            tags:
+                              - LPUniswap.com
+                        - risk_profile_type: HIGH
+                          risk_type: MALICIOUS_DOMAIN
+                          text: 'The url http://0pensea.io is an identified malicious domain'
+                          details:
+                            labels:
+                              - phish-hack
+                            malicious_domain: 'http://0pensea.io'
+                            tags:
+                              - nft-minter
+                              - nkorea
+                        - risk_profile_type: MEDIUM
+                          risk_type: NEW_CONTRACT
+                          text: The contract 0x02f51f8377d54776f85b0ca60b790f6df9827122 was created recently. Proceed with caution
+                          details:
+                            contract: '0x02f51f8377d54776f85b0ca60b790f6df9827122'
+                            contract_created_at: '2022-12-18T14:15:22Z'
+                example-3:
+                  value:
+                    chain: ETHEREUM
+                    network: MAINNET
+                    tx_type: CONTRACT_INTERACTION
+                    simulation:
+                      status: FAILURE
+                      failure_text: Insufficient balance
+                      balances:
+                        - before:
+                            value: 1.9034
+                            token: stETH
+                          after:
+                            value: 0
+                            token: stETH
+                        - before:
+                            value: 1.8012
+                            token: ETH
+                          after:
+                            value: 0
+                            token: ETH
+                    risk_profiles:
+                      summary:
+                        result: WARN
+                        counts:
+                          - risk_profile_type: LOW
+                            count: 2
+                          - risk_profile_type: MEDIUM
+                            count: 0
+                          - risk_profile_type: HIGH
+                            count: 0
+                      data:
+                        - risk_profile_type: LOW
+                          risk_type: TVL_PERCENT_CHANGE_24H
+                          text: The TVL of stETH-ETH in UNISWAP_V3 has decreased by 21.3% in the last 24 hours
+                        - risk_profile_type: LOW
+                          risk_type: TOKEN_PRICE_DEPEGS
+                          text: The current price of stETH is 0.978865 ETH
+        '400':
+          description: Response suggesting a validation error
+        '401':
+          description: Response suggesting an authentication failure. Check if the API credentials are correct and the session is valid
+  /api/v1/chains/{name}/messages/risk-profiles:
+    post:
+      tags:
+        - Risk Profiling
+      operationId: get-messages-risk-profiles
+      summary: Get Message Risk Profiles
+      description: Returns the risk profiles in the message prior to signing
+      parameters:
+        - name: name
+          description: The name of the Blockchain (must be in UPPERCASE). Supports ETHEREUM, POLYGON, and BSC
+          in: path
+          required: true
+          schema:
+            type: string
+            example: ETHEREUM
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageRiskProfilesRequest'
+            examples:
+              example-1:
+                value:
+                  message:
+                    domain:
+                      name: USD Coin
+                      version: '2'
+                      verifyingContract: '0xc0ee9db1a9e07ca63e4ff0d5fb6f86bf68d47b89'
+                      chainId: '1'
+                    primaryType: Permit
+                    message:
+                      holder: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045'
+                      spender: '0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45'
+                      allowed: true
+                      nonce: '7'
+                      expiry: '115792089237316195423570985008687907853269984665640564039457584007913129639935'
+                  metadata:
+                    url: 'https://app.uniswap.com'
+      responses:
+        '200':
+          description: MessageRiskProfiles object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageRiskProfiles'
+              examples:
+                example-1:
+                  value:
+                    chain: ETHEREUM
+                    network: MAINNET
+                    message_type: ERC20_APPROVAL
+                    risk_profiles:
+                      summary:
+                        result: BLOCK
+                        counts:
+                          - risk_profile_type: LOW
+                            count: 0
+                          - risk_profile_type: MEDIUM
+                            count: 0
+                          - risk_profile_type: HIGH
+                            count: 1
+                      data:
+                        - risk_profile_type: HIGH
+                          risk_type: LARGE_APPROVAL
+                          text: This transaction asks for a large approval of 115792089237316195423570985008687907853269984665640564039457.584007913129639935 tokens
+                          details:
+                            approvals:
+                              - approval_value: 1.157920892373162e+59
+                                from: '0x8233464Bbe5511BE322C4fC7b2d7A2a2C94ACc86'
+                                token:
+                                  address: '0xD533a949740bb3306d119CC777fa900bA034cd52'
+                                  name: CRV
+                                spender: '0xB188b1CB84Fb0bA13cb9ee1292769F903A9feC59'
+                        - risk_profile_type: MEDIUM
+                          risk_type: UNVERIFIED_CONTRACT
+                          text: The verifying contract 0xc0ee9db1a9e07ca63e4ff0d5fb6f86bf68d47b89 is not verified
+                example-2:
+                  value:
+                    chain: ETHEREUM
+                    network: MAINNET
+                    message_type: ERC721_TRANSFER
+                    risk_profiles:
+                      summary:
+                        result: BLOCK
+                        counts:
+                          - risk_profile_type: LOW
+                            count: 0
+                          - risk_profile_type: MEDIUM
+                            count: 1
+                          - risk_profile_type: HIGH
+                            count: 1
+                      data:
+                        - risk_profile_type: HIGH
+                          risk_type: MALICIOUS_SEAPORT_SIGNATURE
+                          text: 'You are selling NFTs with total floor price 2000 ETH, in exchange for 194.05 ETH'
+                        - risk_profile_type: MEDIUM
+                          risk_type: SEAPORT_TOKEN_SALE
+                          text: 'The following NFTs are being offered for sale on Seaport: 0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d - 1726 for 194.05 ETH'
+                          details:
+                            assets:
+                              - address: '0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d'
+                                token_id: '1726'
+                                name: BAYC
+                                image_url: 'https://lh3.googleusercontent.com/QFV2eaUui25YiTqOVpWXYzSSLmHvSG62KRB9Sy_j8-52z3vyEMK1GLol87CCXE57MkwMnKHKZWb__IFQD_c7QG2OJv8HLQfVY3M=s250'
+                            from: '0xed2ab4948bA6A909a7751DEc4F34f303eB8c7236'
+                            value: 194.05 ETH
+                example-3:
+                  value:
+                    chain: ETHEREUM
+                    network: MAINNET
+                    message_type: ERC721_TRANSFER
+                    risk_profiles:
+                      summary:
+                        result: BLOCK
+                        counts:
+                          - risk_profile_type: LOW
+                            count: 0
+                          - risk_profile_type: MEDIUM
+                            count: 0
+                          - risk_profile_type: HIGH
+                            count: 2
+                      data:
+                        - risk_profile_type: HIGH
+                          risk_type: MALICIOUS_SEAPORT_SIGNATURE
+                          text: You are exchanging NFTs in return for nothing
+                        - risk_profile_type: HIGH
+                          risk_type: MALICIOUS_DOMAIN
+                          text: 'The url http://0pensea.io is an identified malicious domain'
+                          details:
+                            labels:
+                              - phish-hack
+                            malicious_domain: 'http://0pensea.io'
+                            tags:
+                              - nft-minter
+                              - nkorea
+        '400':
+          description: Response suggesting a validation error
+        '401':
+          description: Response suggesting an authentication failure. Check if the API credentials are correct and the session is valid
+  /api/v1/chains/{name}/users/risk-profiles:
+    post:
+      tags:
+        - Risk Profiling
+      operationId: get-address-risk-profiles
+      summary: Get User Risk Profiles
+      description: Returns the risk profiles of the address or the ENS
+      parameters:
+        - name: name
+          description: The name of the Blockchain (must be in UPPERCASE). Supports ETHEREUM, POLYGON, and BSC
+          in: path
+          required: true
+          schema:
+            type: string
+            example: ETHEREUM
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRiskProfilesRequest'
+            examples:
+              example-1:
+                value:
+                  user:
+                    address: '0xb5BD917bc25F412D029cB2Ab791bff6cD78FD1AC'
+              example-2:
+                value:
+                  user:
+                    ens: vitalik.eth
+      responses:
+        '200':
+          description: UserRiskProfiles object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRiskProfiles'
+              examples:
+                example-1:
+                  value:
+                    chain: ETHEREUM
+                    network: MAINNET
+                    user:
+                      address: '0xb5BD917bc25F412D029cB2Ab791bff6cD78FD1AC'
+                      type: EOA
+                    risk_profiles:
+                      summary:
+                        result: BLOCK
+                        counts:
+                          - risk_profile_type: LOW
+                            count: 0
+                          - risk_profile_type: MEDIUM
+                            count: 0
+                          - risk_profile_type: HIGH
+                            count: 1
+                      data:
+                        - risk_profile_type: HIGH
+                          risk_type: MALICIOUS_COUNTERPARTY
+                          text: The EOA 0x03b7882e55871ffb6300bd2511a52685d689bec3 is an identified malicious counterparty
+                          details:
+                            labels:
+                              - PHISHING
+                            malicious_counterparty:
+                              address: '0x03b7882e55871ffb6300bd2511a52685d689bec3'
+                              type: EOA
+                            tags:
+                              - LPUniswap.com
+                example-2:
+                  value:
+                    chain: ETHEREUM
+                    network: MAINNET
+                    user:
+                      address: '0x484f744e6AEF1152CFfd03177962b23dE488c58D'
+                      ens: vitalik.eth
+                      type: EOA
+                    risk_profiles:
+                      summary:
+                        result: BLOCK
+                        counts:
+                          - risk_profile_type: LOW
+                            count: 0
+                          - risk_profile_type: MEDIUM
+                            count: 0
+                          - risk_profile_type: HIGH
+                            count: 0
+                example-3:
+                  value:
+                    chain: ETHEREUM
+                    network: MAINNET
+                    user:
+                      address: '0x5990c93E10C3b36299A4B7e6306Cc2bC7d818cBe'
+                      type: UNVERIFIED_CONTRACT
+                    risk_profiles:
+                      summary:
+                        result: WARN
+                        counts:
+                          - risk_profile_type: LOW
+                            count: 0
+                          - risk_profile_type: MEDIUM
+                            count: 1
+                          - risk_profile_type: HIGH
+                            count: 0
+                      data:
+                        - risk_profile_type: MEDIUM
+                          risk_type: UNVERIFIED_CONTRACT
+                          text: The contract 0x5990c93E10C3b36299A4B7e6306Cc2bC7d818cBe is not verified
+        '400':
+          description: Response suggesting a validation error
+        '401':
+          description: Response suggesting an authentication failure. Check if the API credentials are correct and the session is valid
+components:
+  schemas:
+    MetricsValue:
+      type: object
+      required:
+        - value
+      properties:
+        value:
+          type: number
+          description: The value of the metric
+          example: 54490324.5581
+        token:
+          type: string
+          description: The token symbol for the denomination of the value
+          examples:
+            - USD
+            - ETH
+            - BNB
+    RiskProfileResult:
+      type: string
+      enum:
+        - ALLOW
+        - WARN
+        - BLOCK
+      example: BLOCK
+    RiskProfileType:
+      type: string
+      enum:
+        - LOW
+        - MEDIUM
+        - HIGH
+      example: MEDIUM
+    TransactionRiskType:
+      type: string
+      enum:
+        - APPROVAL_ALL
+        - LARGE_APPROVAL
+        - APPROVAL_TO_EOA
+        - APPROVAL_TO_UNVERIFIED_CONTRACT
+        - MALICIOUS_COUNTERPARTY
+        - MALICIOUS_DOMAIN
+        - INSECURE_DOMAIN
+        - TRANSFER_TO_TOKEN_CONTRACT
+        - TRANSFER_TO_BURN_ADDRESS
+        - NEW_CONTRACT
+        - UNVERIFIED_CONTRACT
+        - TVL_PERCENT_CHANGE_24H
+        - TOKEN_PRICE_DEPEGS
+      example: LARGE_APPROVAL
+    MessageRiskType:
+      type: string
+      enum:
+        - APPROVAL_ALL
+        - LARGE_APPROVAL
+        - LONG_APPROVAL
+        - APPROVAL_TO_EOA
+        - APPROVAL_TO_UNVERIFIED_CONTRACT
+        - MALICIOUS_COUNTERPARTY
+        - MALICIOUS_DOMAIN
+        - INSECURE_DOMAIN
+        - MALICIOUS_SEAPORT_SIGNATURE
+        - NEW_CONTRACT
+        - UNVERIFIED_CONTRACT
+        - SEAPORT_TOKEN_SALE
+      example: LARGE_APPROVAL
+    UserRiskType:
+      type: string
+      enum:
+        - MALICIOUS_COUNTERPARTY
+        - NEW_CONTRACT
+        - UNVERIFIED_CONTRACT
+      example: MALICIOUS_COUNTERPARTY
+    BalancesBeforeAfter:
+      type: object
+      properties:
+        before:
+          description: Balance of the token before the transaction goes through
+          $ref: '#/components/schemas/MetricsValue'
+        after:
+          description: Balance of the token after the transaction goes through
+          $ref: '#/components/schemas/MetricsValue'
+    RiskProfileSummary:
+      type: object
+      properties:
+        result:
+          description: 'Advice to the client, whether to block, warn or allow the transaction to go through'
+          $ref: '#/components/schemas/RiskProfileResult'
+        counts:
+          type: array
+          items:
+            type: object
+            properties:
+              risk_profile_type:
+                description: The type of the risk profile
+                $ref: '#/components/schemas/RiskProfileType'
+              count:
+                type: number
+                description: The number of risks in this particular risk profile type
+    UrlRiskProfileDataDetails:
+      type: object
+      required:
+        - malicious_domain
+      properties:
+        labels:
+          type: array
+          description: List of identification reasons for the malicious domain
+          items:
+            type: string
+            example: phish-hack
+        malicious_domain:
+          type: string
+          description: The url of the malicious domain
+          example: 'https://byac.art'
+        tags:
+          type: array
+          description: List of tags that gives more details around the malicious domain
+          items:
+            type: string
+            example: nkorea
+    TransactionRiskProfilesRequest:
+      type: object
+      required:
+        - transaction
+      properties:
+        transaction:
+          type: object
+          required:
+            - from
+            - to
+            - value
+          properties:
+            from:
+              type: string
+              description: The sender of the transaction
+              example: '0x8233464Bbe5511BE322C4fC7b2d7A2a2C94ACc86'
+            to:
+              type: string
+              description: The recipient of the token
+              example: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
+            value:
+              type: number
+              description: The value of the transaction
+              example: 1234
+            data:
+              type: string
+              description: The hex value of the input data
+              example: '0x095ea7b3000000000000000000000000b5bd917bc25f412d029cb2ab791bff6cd78fd1acffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
+            gas:
+              type: string
+              description: The gas set in the transaction
+              example: '194255'
+            gas_price:
+              type: string
+              description: The gas price
+              example: '8395943294'
+        metadata:
+          type: object
+          properties:
+            url:
+              type: string
+              description: The url of the dapp that is requesting the transaction signing
+              example: 'https://LPUniswap.com'
+    TransactionRiskProfiles:
+      type: object
+      required:
+        - tx_type
+      properties:
+        chain:
+          type: string
+          description: The name of the Blockchain (in UPPERCASE)
+          example: ETHEREUM
+        network:
+          type: string
+          description: The network of the Blockchain (in UPPERCASE)
+          example: MAINNET
+        tx_type:
+          type: string
+          enum:
+            - CONTRACT_CREATION
+            - CONTRACT_INTERACTION
+            - EOA_INTERACTION
+            - ERC20_TRANSFER
+            - ERC20_APPROVAL
+            - ERC20_INTERACTION
+            - ERC721_TRANSFER
+            - ERC721_APPROVAL
+            - ERC721_INTERACTION
+            - ERC1155_TRANSFER
+            - ERC1155_APPROVAL
+            - ERC1155_INTERACTION
+          example: ERC20_APPROVAL
+        counterparty_details:
+          type: object
+          properties:
+            name:
+              type: string
+              description: The name of the token or protocol
+              example: USD Coin (USDC)
+        simulation:
+          type: object
+          properties:
+            status:
+              type: string
+              enum:
+                - SUCCESS
+                - FAILURE
+              example: SUCCESS
+            failure_text:
+              type: string
+              description: 'The reason the transaction would fail. This can be displayed as is, on the UI'
+              example: Insufficient balance for gas
+            balances:
+              type: array
+              description: Balances of tokens in the address before and after the transaction
+              items:
+                $ref: '#/components/schemas/BalancesBeforeAfter'
+        risk_profiles:
+          type: object
+          properties:
+            summary:
+              $ref: '#/components/schemas/RiskProfileSummary'
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  risk_profile_type:
+                    description: The type of the risk profile
+                    $ref: '#/components/schemas/RiskProfileType'
+                  risk_type:
+                    description: The type of the risk
+                    $ref: '#/components/schemas/TransactionRiskType'
+                  text:
+                    type: string
+                    description: 'Description of the risk. This can be displayed as is, on the UI'
+                  details:
+                    type: object
+                    oneOf:
+                      - type: object
+                        required:
+                          - approvals
+                        properties:
+                          approvals:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                approval_value:
+                                  type: number
+                                  description: The value of the approval
+                                  example: 1000
+                                from:
+                                  type: string
+                                  description: The owner of the token
+                                  example: '0x8233464Bbe5511BE322C4fC7b2d7A2a2C94ACc86'
+                                token:
+                                  type: object
+                                  properties:
+                                    address:
+                                      type: string
+                                      description: The address of the token
+                                      example: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
+                                    name:
+                                      type: string
+                                      description: The token name
+                                      example: WETH
+                                spender:
+                                  type: string
+                                  description: The address receiving the approval
+                                  example: '0xB188b1CB84Fb0bA13cb9ee1292769F903A9feC59'
+                      - type: object
+                        required:
+                          - malicious_counterparty
+                        properties:
+                          labels:
+                            type: array
+                            description: List of identification reasons for the malicious contract
+                            items:
+                              type: string
+                              example: HEIST
+                          malicious_counterparty:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                                description: The address of the malicious contract or EOA that is interacted with
+                                example: '0x02f51f8377d54776f85b0ca60b790f6df9827122'
+                              type:
+                                type: string
+                                enum:
+                                  - CONTRACT
+                                  - EOA
+                          tags:
+                            type: array
+                            description: 'List of tags that gives more details around the malicious contract, like the URL, tag of the contract in explorers, etc.'
+                            items:
+                              type: string
+                              example: Multichain Exploiter 1
+                      - $ref: '#/components/schemas/UrlRiskProfileDataDetails'
+                      - type: object
+                        required:
+                          - contract_created_at
+                        properties:
+                          contract:
+                            type: string
+                            description: The address of the contract that is interacted with
+                            example: '0x02f51f8377d54776f85b0ca60b790f6df9827122'
+                          contract_created_at:
+                            type: string
+                            description: The timestamp when the contract was created
+                            example: '2022-12-18T14:15:22Z'
+    MessageRiskProfilesRequest:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: object
+          description: EIP-712 compatible message of type `SignTypedData V4`
+        metadata:
+          type: object
+          properties:
+            url:
+              type: string
+              description: The url of the dapp that is requesting the transaction signing
+              example: 'https://LPUniswap.com'
+    MessageRiskProfiles:
+      type: object
+      required:
+        - message_type
+      properties:
+        chain:
+          type: string
+          description: The name of the Blockchain (in UPPERCASE)
+          example: ETHEREUM
+        network:
+          type: string
+          description: The network of the Blockchain (in UPPERCASE)
+          example: MAINNET
+        message_type:
+          type: string
+          enum:
+            - ERC20_APPROVAL
+            - ERC721_APPROVAL
+            - ERC721_TRANSFER
+            - ERC1155_TRANSFER
+          example: ERC20_APPROVAL
+        risk_profiles:
+          type: object
+          properties:
+            summary:
+              $ref: '#/components/schemas/RiskProfileSummary'
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  risk_profile_type:
+                    description: The type of the risk profile
+                    $ref: '#/components/schemas/RiskProfileType'
+                  risk_type:
+                    description: The type of the risk
+                    $ref: '#/components/schemas/MessageRiskType'
+                  text:
+                    type: string
+                    description: 'Description of the risk. This can be displayed as is, on the UI'
+                  details:
+                    type: object
+                    oneOf:
+                      - type: object
+                        required:
+                          - approvals
+                        properties:
+                          approvals:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                approval_value:
+                                  type: number
+                                  description: The value of the approval
+                                  example: 1000
+                                from:
+                                  type: string
+                                  description: The owner of the token
+                                  example: '0x8233464Bbe5511BE322C4fC7b2d7A2a2C94ACc86'
+                                token:
+                                  type: object
+                                  properties:
+                                    address:
+                                      type: string
+                                      description: The address of the token
+                                      example: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
+                                    name:
+                                      type: string
+                                      description: The token name
+                                      example: WETH
+                                spender:
+                                  type: string
+                                  description: The address receiving the approval
+                                  example: '0xB188b1CB84Fb0bA13cb9ee1292769F903A9feC59'
+                      - type: object
+                        required:
+                          - malicious_counterparty
+                        properties:
+                          labels:
+                            type: array
+                            description: List of identification reasons for the malicious contract
+                            items:
+                              type: string
+                              example: HEIST
+                          malicious_counterparty:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                                description: The address of the malicious contract or EOA that is interacted with
+                                example: '0x02f51f8377d54776f85b0ca60b790f6df9827122'
+                              type:
+                                type: string
+                                enum:
+                                  - CONTRACT
+                                  - EOA
+                          tags:
+                            type: array
+                            description: 'List of tags that gives more details around the malicious contract, like the URL, tag of the contract in explorers, etc.'
+                            items:
+                              type: string
+                              example: Multichain Exploiter 1
+                      - $ref: '#/components/schemas/UrlRiskProfileDataDetails'
+                      - type: object
+                        required:
+                          - assets
+                        properties:
+                          assets:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                address:
+                                  type: string
+                                  description: The address of the token
+                                  example: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
+                                token_id:
+                                  type: string
+                                  description: The token id
+                                  example: '1726'
+                                name:
+                                  type: string
+                                  description: The token name
+                                  example: BAYC
+                                image_url:
+                                  type: string
+                                  description: The link to the token's image
+                                  example: 'https://lh3.googleusercontent.com/QFV2eaUui25YiTqOVpWXYzSSLmHvSG62KRB9Sy_j8-52z3vyEMK1GLol87CCXE57MkwMnKHKZWb__IFQD_c7QG2OJv8HLQfVY3M=s250'
+                          from:
+                            type: string
+                            description: The owner of the token
+                            example: '0x8233464Bbe5511BE322C4fC7b2d7A2a2C94ACc86'
+                          value:
+                            type: string
+                            description: The value of the tokens being exchanged
+                            example: 192 ETH
+    UserRiskProfilesRequest:
+      type: object
+      required:
+        - user
+      properties:
+        user:
+          type: object
+          properties:
+            address:
+              type: string
+              description: The address. One of `address` or `ens` needs to be present
+              example: '0x8233464Bbe5511BE322C4fC7b2d7A2a2C94ACc86'
+            ens:
+              type: string
+              description: The ENS name. One of `address` or `ens` needs to be present
+              example: buterin.eth
+    UserRiskProfiles:
+      type: object
+      properties:
+        chain:
+          type: string
+          description: The name of the Blockchain (in UPPERCASE)
+          example: ETHEREUM
+        network:
+          type: string
+          description: The network of the Blockchain (in UPPERCASE)
+          example: MAINNET
+        user:
+          type: object
+          properties:
+            address:
+              type: string
+              description: The address
+              example: '0x8233464Bbe5511BE322C4fC7b2d7A2a2C94ACc86'
+            ens:
+              type: string
+              description: The ENS name
+              example: buterin.eth
+            type:
+              type: string
+              enum:
+                - EOA
+                - VERIFIED_CONTRACT
+                - UNVERIFIED_CONTRACT
+        risk_profiles:
+          type: object
+          properties:
+            summary:
+              $ref: '#/components/schemas/RiskProfileSummary'
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  risk_profile_type:
+                    description: The type of the risk profile
+                    $ref: '#/components/schemas/RiskProfileType'
+                  risk_type:
+                    description: The type of the risk
+                    $ref: '#/components/schemas/UserRiskType'
+                  text:
+                    type: string
+                    description: 'Description of the risk. This can be displayed as is, on the UI'
+                  details:
+                    type: object
+                    oneOf:
+                      - type: object
+                        required:
+                          - malicious_counterparty
+                        properties:
+                          labels:
+                            type: array
+                            description: List of identification reasons for the malicious contract
+                            items:
+                              type: string
+                              example: HEIST
+                          malicious_counterparty:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                                description: The address of the malicious contract or EOA that is interacted with
+                                example: '0x02f51f8377d54776f85b0ca60b790f6df9827122'
+                              type:
+                                type: string
+                                enum:
+                                  - CONTRACT
+                                  - EOA
+                          tags:
+                            type: array
+                            description: 'List of tags that gives more details around the malicious contract, like the URL, tag of the contract in explorers, etc.'
+                            items:
+                              type: string
+                              example: Multichain Exploiter 1
+                      - type: object
+                        required:
+                          - contract_created_at
+                        properties:
+                          contract:
+                            type: string
+                            description: The address of the contract that is interacted with
+                            example: '0x02f51f8377d54776f85b0ca60b790f6df9827122'
+                          contract_created_at:
+                            type: string
+                            description: The timestamp when the contract was created
+                            example: '2022-12-18T14:15:22Z'

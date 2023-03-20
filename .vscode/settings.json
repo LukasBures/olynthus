@@ -1,4 +1,34 @@
 {
+  "javascript.preferences.importModuleSpecifier": "relative",
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    }
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    }
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "cSpell.words": [
+    "Ankr",
+    "arda",
+    "clickhouse",
+    "counterparty",
+    "Defillama",
+    "ethersproject",
+    "internationalisation",
+    "keccak",
+    "sighash",
+    "sighashes"
+  ],
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "typescript.updateImportsOnFileMove.enabled": "always",
   "workbench.colorCustomizations": {
     "commandCenter.border": "#15202b99",
     "sash.hoverBorder": "#cdff35",

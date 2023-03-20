@@ -1,0 +1,58 @@
+name: Integration Tests
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    #Run this workflow when a PR is opened/reopened/synchronized on main branch
+    branches:
+      - main
+      - 0.1.x
+
+jobs:
+  Integration-Tests:
+    runs-on: ubuntu-latest
+    # Service containers to run with `container-job`
+    services:
+      # Label used to access the service container
+      clickhouse:
+        image: clickhouse/clickhouse-server
+        ports:
+          - 8124:8123
+        env:
+          CLICKHOUSE_USER: testuser
+          CLICKHOUSE_PASSWORD: testpassword
+    env:
+      CONFIG_ENV: test
+    steps:
+      #Checkout Code
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Use Node.js v16.14.0
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.14.0
+          cache: 'yarn'
+
+      #--prefer-offline tells yarn to use cached downloads (in the cache directory mentioned above) during installation whenever possible instead of downloading from the server.
+      - name: Install Dependencies
+        run: yarn --prefer-offline
+
+      # Running the integration tests.
+      - run: yarn run test:int:pipeline
+
+      # Coverage
+      - uses: jwalton/gh-find-current-pr@v1
+        id: findPR
+      - uses: ArtiomTr/jest-coverage-report-action@v2
+        id: coverage
+        with:
+          prnumber: ${{ steps.findPR.outputs.number }}
+          output: report-markdown
+          coverage-file: report.json
+          base-coverage-file: report.json
+          skip-step: all
+      - uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          message: ${{ steps.coverage.outputs.report }}
