@@ -10,12 +10,12 @@ import { CommonUtils } from '../utils/common.utils';
 import { ClickhouseService } from './clickhouse.service';
 import { DefillamaService } from './defillama.service';
 import { SimpleHashService } from './simplehash.service';
-import { SimulationService } from './simulation.service';
+import { TenderlyService } from './tenderly.service';
 
 export class SafeguardService {
   private logger: CustomLogger;
 
-  private simulationService: SimulationService;
+  private simulationService: TenderlyService;
 
   private simpleHashService: SimpleHashService;
 
@@ -23,12 +23,12 @@ export class SafeguardService {
 
   private nodeMultiplexer: NodeMultiplexer;
 
-  private clickhouseService: ClickhouseService;
+  private databaseService: ClickhouseService;
 
   constructor() {
     this.nodeMultiplexer = new NodeMultiplexer();
-    this.simulationService = new SimulationService();
-    this.clickhouseService = new ClickhouseService();
+    this.simulationService = new TenderlyService();
+    this.databaseService = new ClickhouseService();
     this.simpleHashService = new SimpleHashService();
     this.defillamaService = new DefillamaService();
 
@@ -1642,8 +1642,11 @@ export class SafeguardService {
     network: Networks;
   }) {
     //check for transaction.to in malicious_counterparty table
-    const maliciousCounterpartyDetails =
-      await this.clickhouseService.getMaliciousCounterpartyDetails(address, chain, network);
+    const maliciousCounterpartyDetails = await this.databaseService.getMaliciousCounterpartyDetails(
+      address,
+      chain,
+      network
+    );
 
     this.logger.debug(
       `Found ${maliciousCounterpartyDetails.length} entries for contract ${address}`
@@ -1807,7 +1810,7 @@ export class SafeguardService {
         from: from,
         token: {
           address: to,
-          name: tokenInformation.symbol || '',
+          name: tokenInformation?.symbol || '',
         },
       };
     } else if (functionSighash === this.nodeMultiplexer.setApprovalForAllSigHash) {
@@ -2132,7 +2135,7 @@ export class SafeguardService {
     const validatedURL = new URL(url);
     const domains = CommonUtils.truncateAndExpandDomain(validatedURL.hostname);
 
-    const allowlistedDomainDetails = await this.clickhouseService.getAllowedDomainDetails(
+    const allowlistedDomainDetails = await this.databaseService.getAllowedDomainDetails(
       _.uniq(domains),
       [CommonConstants.DATABASE_COLUMNS.URL]
     );
@@ -2144,7 +2147,7 @@ export class SafeguardService {
     //Performing direct 1:1 matching based on combination using our malicious domains list
     let maliciousDomainDetailsPromise: Promise<CommonTypes.DatasetMaliciousDomains[]>;
     if (allowlistedDomainDetails.length === 0) {
-      maliciousDomainDetailsPromise = this.clickhouseService.getMaliciousDomainDetails(
+      maliciousDomainDetailsPromise = this.databaseService.getMaliciousDomainDetails(
         _.uniq(domains),
         [
           CommonConstants.DATABASE_COLUMNS.URL,
@@ -2157,7 +2160,7 @@ export class SafeguardService {
        * Searching for similar domains for the given url against allowlist_domains by using prefix/suffix matching and edit distance based fuzzy matching.
        * * Note: url column in required for final response and sld is required to do edit distance filtering and sorting
        */
-      const fuzzyMatchesPromise = this.clickhouseService.getFuzzyMaliciousDomainDetails(
+      const fuzzyMatchesPromise = this.databaseService.getFuzzyMaliciousDomainDetails(
         validatedURL.hostname,
         [CommonConstants.DATABASE_COLUMNS.URL, CommonConstants.DATABASE_COLUMNS.SLD]
       );

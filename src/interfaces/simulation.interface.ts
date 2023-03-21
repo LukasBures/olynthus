@@ -1,87 +1,52 @@
-import axios from 'axios';
 import BigNumber from 'bignumber.js';
 import { ethers } from 'ethers';
 import { CommonConstants } from '../constants/common.constants';
-import { CustomLogger } from '../lib/logger/logger';
-import type { Networks, Chains } from '../lib/node-multiplexer';
+import type { Chains, Networks } from '../lib/node-multiplexer';
 import { NodeMultiplexer, NodeUtils } from '../lib/node-multiplexer';
 import type { CommonTypes } from '../types/common.types';
 
-export class SimulationService {
-  private logger: CustomLogger;
-
-  private readonly tenderlyApiUrl = process.env.TENDERLY_API_URL;
-
-  private nodeMultiplexer: NodeMultiplexer;
+export abstract class SimulationInterface {
+  protected nodeMultiplexer: NodeMultiplexer;
 
   constructor() {
-    this.logger = new CustomLogger(SimulationService.name);
     this.nodeMultiplexer = new NodeMultiplexer();
   }
 
-  async simulateTransaction(
+  // Overridden in simulation implementation class
+  abstract simulateTransaction(
+    transaction: CommonTypes.TransactionParams,
+    txType: CommonConstants.SafeguardTxType,
+    chain: Chains,
+    network: Networks
+  );
+
+  async decodeSimulationResult(
+    simulationResult,
     transaction: CommonTypes.TransactionParams,
     txType: CommonConstants.SafeguardTxType,
     chain: Chains,
     network: Networks
   ) {
     try {
-      // Default / Native token of the chain
-      const nativeToken = CommonConstants.NativeTokens[chain];
-      const chainId = CommonConstants.CHAIN_ID[chain][network];
-
-      if (process.env.SIMULATION_MODE === 'false') {
-        return {
-          status: CommonConstants.SafeguardSimulationStatusType.SUCCESS,
-          failure_text: '',
-          balances: [],
-        };
-      }
-
-      const headers = {
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Access-Key': process.env.TENDERLY_ACCESS_KEY,
-        },
-      };
-
-      //ToDo: Make network_id dynamic and get chain token value
-      const simulationBody = {
-        network_id: chainId,
-        from: transaction.from,
-        to: transaction.to,
-        value: new BigNumber(
-          ethers.utils.parseUnits(transaction.value.toString(), 'ether').toString()
-        ).toNumber(),
-        input: transaction.data === '' ? '0x' : transaction.data,
-        gas: parseInt(transaction?.gas) || 21000,
-        gas_price: transaction?.gas_price || '1000000000',
-        save_if_fails: false,
-        save: false,
-        simulation_type: 'quick',
-      };
-
-      const response = await axios.post(this.tenderlyApiUrl, simulationBody, headers);
-      const simulationResponse = response.data;
-
-      if (!simulationResponse.simulation.status) {
+      if (!simulationResult.simulation.status) {
         return {
           status: CommonConstants.SafeguardSimulationStatusType.FAILURE,
-          failure_text: simulationResponse.transaction.error_message,
+          failure_text: simulationResult.transaction.error_message,
           balances: [],
         };
       }
 
+      const nativeToken = CommonConstants.NativeTokens[chain];
       const simulationStatus = CommonConstants.SafeguardSimulationStatusType.SUCCESS;
 
       if (txType === CommonConstants.SafeguardTxType.ERC20_TRANSFER) {
         //ERC20 token difference
-        let stateDifference = simulationResponse.transaction.transaction_info.state_diff;
+        let stateDifference = simulationResult.transaction.transaction_info.state_diff;
 
         stateDifference = this.getBalanceDifferenceForStates(stateDifference);
 
         //Native token difference
-        const balanceDifference = simulationResponse.transaction.transaction_info.balance_diff;
+        const balanceDifference = simulationResult.transaction.transaction_info.balance_diff;
 
         const tokenInformation = await this.nodeMultiplexer.getTokenInformation(
           transaction.to,
@@ -124,7 +89,7 @@ export class SimulationService {
         txType === CommonConstants.SafeguardTxType.ERC721_TRANSFER ||
         txType === CommonConstants.SafeguardTxType.ERC1155_TRANSFER
       ) {
-        const balanceDifference = simulationResponse.transaction.transaction_info.balance_diff;
+        const balanceDifference = simulationResult.transaction.transaction_info.balance_diff;
 
         const functionSighash = transaction.data.substring(0, 10);
         const transferDetails = await this.decodeErcTransfers(
@@ -164,7 +129,7 @@ export class SimulationService {
           ],
         };
       } else {
-        const balanceDifference = simulationResponse.transaction.transaction_info.balance_diff;
+        const balanceDifference = simulationResult.transaction.transaction_info.balance_diff;
 
         const balanceDifferenceDict = balanceDifference.find(
           (element) => element.address.toLowerCase() === transaction.from
@@ -188,24 +153,6 @@ export class SimulationService {
         };
       }
     } catch (error) {
-      //Check if error is due to tenderly api
-      if (error.response) {
-        if (error.response.data.error.slug === 'intent_execution_not_allowed') {
-          // swallow rate limit errors and return SUCCESS (making the API best-effor basis)
-          return {
-            status: CommonConstants.SafeguardSimulationStatusType.SUCCESS,
-            failure_text: '',
-            balances: [],
-          };
-        }
-
-        return {
-          status: CommonConstants.SafeguardSimulationStatusType.FAILURE,
-          failure_text: error.response.data.error.message,
-          balances: [],
-        };
-      }
-
       return {
         status: CommonConstants.SafeguardSimulationStatusType.FAILURE,
         failure_text: 'unexpected error',

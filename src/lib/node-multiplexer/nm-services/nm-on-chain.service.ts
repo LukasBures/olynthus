@@ -234,6 +234,8 @@ export class NodeOnChainService {
         ) as NodeBlockchainScanProviderService;
         const result = await chainScanProvider.getContractCreation([address]);
 
+        if (result === null || result === undefined) return;
+
         const contractDetails = result.find(
           (details) => details.contractAddress.toLowerCase() === address.toLowerCase()
         );
@@ -274,7 +276,9 @@ export class NodeOnChainService {
       if (CommonConstants.BurnAddresses.includes(address)) {
         contractName = 'Burn Address';
       } else {
-        contractName = contractDetails[1]?.name ? contractDetails[1].name : contractDetails[2].name;
+        contractName = contractDetails[1]?.name
+          ? contractDetails[1].name
+          : contractDetails[2]?.name || '';
       }
 
       return {

@@ -29,8 +29,8 @@ export class NodeArchiveNodeIoProviderService extends NodeProviderServiceBase {
       return result;
     } catch (error) {
       this.logger.error(
-        `archivenode.io provider is not active for chain ${this.chain} & network ${this.network}`,
-        error.stack
+        error,
+        `archivenode.io provider is not active for chain ${this.chain} & network ${this.network}`
       );
       return false;
     }

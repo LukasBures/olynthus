@@ -82,10 +82,13 @@ export class IntegrationSpecHelper {
    * ENTITY UTILS
    *************/
 
-  setupArdaFullNodeMock(ardaFullNodeMock: nock.Scope = null, times: number = 1): nock.Scope {
-    let mock: nock.Scope = ardaFullNodeMock;
+  setupProtectedFullNodeMock(
+    protectedFullNodeMock: nock.Scope = null,
+    times: number = 1
+  ): nock.Scope {
+    let mock: nock.Scope = protectedFullNodeMock;
     if (!mock) {
-      mock = nock(process.env.NODE_ARDA_FULL_NODE_ETH_MAINNET, {
+      mock = nock(process.env.NODE_PROTECTED_FULL_NODE_ETH_MAINNET, {
         reqheaders: {
           'Content-Type': 'application/json',
         },
@@ -289,10 +292,13 @@ export class IntegrationSpecHelper {
     return mock;
   }
 
-  setupArdaArchiveNodeMock(ardaArchiveNodeMock: nock.Scope = null, times: number = 1): nock.Scope {
-    let mock: nock.Scope = ardaArchiveNodeMock;
+  setupProtectedArchiveNodeMock(
+    protectedArchiveNodeMock: nock.Scope = null,
+    times: number = 1
+  ): nock.Scope {
+    let mock: nock.Scope = protectedArchiveNodeMock;
     if (!mock) {
-      mock = nock(process.env.NODE_ARDA_ARCHIVE_NODE_ETH_MAINNET, {
+      mock = nock(process.env.NODE_PROTECTED_ARCHIVE_NODE_ETH_MAINNET, {
         reqheaders: {
           'Content-Type': 'application/json',
         },
@@ -528,15 +534,18 @@ export class IntegrationSpecHelper {
     return mock;
   }
 
-  addHealthChecksToArdaFullNodeMock(ardaFullNodeMock: nock.Scope, times: number = 1000): void {
-    this.setupArdaFullNodeMock(ardaFullNodeMock, times);
-  }
-
-  addHealthChecksToArdaArchiveNodeMock(
-    ardaArchiveNodeMock: nock.Scope,
+  addHealthChecksToProtectedFullNodeMock(
+    protectedFullNodeMock: nock.Scope,
     times: number = 1000
   ): void {
-    this.setupArdaArchiveNodeMock(ardaArchiveNodeMock, times);
+    this.setupProtectedFullNodeMock(protectedFullNodeMock, times);
+  }
+
+  addHealthChecksToProtectedArchiveNodeMock(
+    protectedArchiveNodeMock: nock.Scope,
+    times: number = 1000
+  ): void {
+    this.setupProtectedArchiveNodeMock(protectedArchiveNodeMock, times);
   }
 
   setupEtherscanNodeMock(): nock.Scope {

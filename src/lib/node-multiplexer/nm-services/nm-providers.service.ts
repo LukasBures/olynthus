@@ -1,22 +1,23 @@
 import { ethers } from 'ethers';
 import Web3 from 'web3';
+import { NodeUtils } from '..';
 import { CustomLogger } from '../../logger/logger';
 import type { Chains } from '../nm-common/nm.constants';
 import { Networks, NodeConstants } from '../nm-common/nm.constants';
 import type { NodeProviderServiceBase } from './nm-provider-base.service';
 import { NodeAnkrProviderService } from './nm-providers-services/nm-ankr.service';
 import { NodeArchiveNodeIoProviderService } from './nm-providers-services/nm-archivenode-io.service';
-import { NodeArdaArchiveNodeProviderService } from './nm-providers-services/nm-arda-archive-node.service';
-import { NodeArdaFullNodeProviderService } from './nm-providers-services/nm-arda-full-node.service';
+import { NodeProtectedArchiveNodeProviderService } from './nm-providers-services/nm-protected-archive-node.service';
+import { NodeProtectedFullNodeProviderService } from './nm-providers-services/nm-protected-full-node.service';
 import { NodeBlockchainScanProviderService } from './nm-providers-services/nm-blockchain-scan.service';
 import { NodeInfuraProviderService } from './nm-providers-services/nm-infura.service';
 
 export class NodeProviderService {
   private logger: CustomLogger;
 
-  private ardaFullNodes: { [key: string]: NodeArdaFullNodeProviderService } = {};
+  private protectedFullNodes: { [key: string]: NodeProtectedFullNodeProviderService } = {};
 
-  private ardaArchiveNodes: { [key: string]: NodeArdaArchiveNodeProviderService } = {};
+  private protectedArchiveNodes: { [key: string]: NodeProtectedArchiveNodeProviderService } = {};
 
   private infuraNodes: { [key: string]: NodeInfuraProviderService } = {};
 
@@ -45,29 +46,35 @@ export class NodeProviderService {
     const chainNetwork = `${chain}_${network}`;
 
     switch (providerName) {
-      case NodeConstants.ProviderNames.ARDA_FULL_NODE: {
-        if (!this.ardaFullNodes[chainNetwork]) {
-          this.ardaFullNodes[chainNetwork] = new NodeArdaFullNodeProviderService();
-          this.ardaFullNodes[chainNetwork].init(chain, network);
-          this.logger.debug(`Initialized Arda Full Node Provider for ${chain} ${network}`);
+      case NodeConstants.ProviderNames.PROTECTED_FULL_NODE: {
+        if (!NodeUtils.PROTECTED_FULL_NODE[chain]?.[network]) return null;
+
+        if (!this.protectedFullNodes[chainNetwork]) {
+          this.protectedFullNodes[chainNetwork] = new NodeProtectedFullNodeProviderService();
+          this.protectedFullNodes[chainNetwork].init(chain, network);
+          this.logger.debug(`Initialized Protected Full Node Provider for ${chain} ${network}`);
         }
-        if (await this.ardaFullNodes[chainNetwork].isActive())
-          return this.ardaFullNodes[chainNetwork].selectProvider(providerType);
+        if (await this.protectedFullNodes[chainNetwork].isActive())
+          return this.protectedFullNodes[chainNetwork].selectProvider(providerType);
         else return null;
       }
 
-      case NodeConstants.ProviderNames.ARDA_ARCHIVE_NODE: {
-        if (!this.ardaArchiveNodes[chainNetwork]) {
-          this.ardaArchiveNodes[chainNetwork] = new NodeArdaArchiveNodeProviderService();
-          this.ardaArchiveNodes[chainNetwork].init(chain, network);
-          this.logger.debug(`Initialized Arda Archive Node Provider for ${chain} ${network}`);
+      case NodeConstants.ProviderNames.PROTECTED_ARCHIVE_NODE: {
+        if (!NodeUtils.PROTECTED_ARCHIVE_NODE[chain]?.[network]) return null;
+
+        if (!this.protectedArchiveNodes[chainNetwork]) {
+          this.protectedArchiveNodes[chainNetwork] = new NodeProtectedArchiveNodeProviderService();
+          this.protectedArchiveNodes[chainNetwork].init(chain, network);
+          this.logger.debug(`Initialized Protected Archive Node Provider for ${chain} ${network}`);
         }
-        if (await this.ardaArchiveNodes[chainNetwork].isActive())
-          return this.ardaArchiveNodes[chainNetwork].selectProvider(providerType);
+        if (await this.protectedArchiveNodes[chainNetwork].isActive())
+          return this.protectedArchiveNodes[chainNetwork].selectProvider(providerType);
         else return null;
       }
 
       case NodeConstants.ProviderNames.INFURA_NODE: {
+        if (!NodeUtils.INFURA_NODE[chain]?.[network]) return null;
+
         if (!this.infuraNodes[chainNetwork]) {
           this.infuraNodes[chainNetwork] = new NodeInfuraProviderService();
           this.infuraNodes[chainNetwork].init(chain, network);
@@ -79,6 +86,8 @@ export class NodeProviderService {
       }
 
       case NodeConstants.ProviderNames.ANKR_NODE: {
+        if (!NodeUtils.ANKR_NODE[chain]?.[network]) return null;
+
         if (!this.ankrProviders[chainNetwork]) {
           this.ankrProviders[chainNetwork] = new NodeAnkrProviderService();
           this.ankrProviders[chainNetwork].init(chain, network);
@@ -90,6 +99,8 @@ export class NodeProviderService {
       }
 
       case NodeConstants.ProviderNames.ARCHIVE_NODE_IO_NODE: {
+        if (!NodeUtils.ARCHIVE_NODE_IO[chain]?.[network]) return null;
+
         if (!this.archiveNodeIo[chainNetwork]) {
           this.archiveNodeIo[chainNetwork] = new NodeArchiveNodeIoProviderService();
           this.archiveNodeIo[chainNetwork].init(chain, network);
@@ -101,6 +112,8 @@ export class NodeProviderService {
       }
 
       case NodeConstants.ProviderNames.BLOCKCHAIN_SCAN: {
+        if (!NodeUtils.BLOCKCHAIN_SCAN_API_URL[chain]?.[network]) return null;
+
         if (!this.blockchainScanProviders[chainNetwork]) {
           this.blockchainScanProviders[chainNetwork] = new NodeBlockchainScanProviderService();
           this.blockchainScanProviders[chainNetwork].init(chain, network);

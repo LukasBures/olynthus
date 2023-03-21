@@ -193,8 +193,8 @@ export namespace NodeConstants {
   }
 
   export const enum ProviderNames {
-    ARDA_FULL_NODE = 'arda_full_node',
-    ARDA_ARCHIVE_NODE = 'arda_archive_node',
+    PROTECTED_FULL_NODE = 'protected_full_node',
+    PROTECTED_ARCHIVE_NODE = 'protected_archive_node',
     INFURA_NODE = 'infura_node',
     ALCHEMY_NODE = 'alchemy_node',
     ANKR_NODE = 'ankr_node',
@@ -220,14 +220,14 @@ export namespace NodeConstants {
     ];
   } = {
     [PriorityForMethodKeys.FULL_NODE]: [
-      ProviderNames.ARDA_FULL_NODE,
-      ProviderNames.ARDA_ARCHIVE_NODE,
+      ProviderNames.PROTECTED_FULL_NODE,
+      ProviderNames.PROTECTED_ARCHIVE_NODE,
       ProviderNames.ARCHIVE_NODE_IO_NODE,
       ProviderNames.ANKR_NODE,
       ProviderNames.INFURA_NODE,
     ],
     [PriorityForMethodKeys.ARCHIVE_NODE]: [
-      ProviderNames.ARDA_ARCHIVE_NODE,
+      ProviderNames.PROTECTED_ARCHIVE_NODE,
       ProviderNames.ARCHIVE_NODE_IO_NODE,
       ProviderNames.ANKR_NODE,
       ProviderNames.INFURA_NODE,

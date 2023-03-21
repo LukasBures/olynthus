@@ -9,6 +9,7 @@
   - [4. Commits](#4-commits)
   - [5. Code Organization](#5-code-organization)
   - [6. Node Multiplexer](#6-node-multiplexer)
+  - [7. Interfaces](#7-interfaces)
 
 ## 2. Welcome
 
@@ -24,7 +25,7 @@ To get started with contributing to this project, follow these steps:
 
 - Please go through **unassigned open issues** to pick a task you'd like to contribute to
 - To filter unassigned open issues, you can search with labels as `Status: TODO` and `Resolution: Confirmed` (and ignoring the label `Core Team`)
-- Leave a comment in the issue which you'd like to work on. Once a team member assigns the issue to you, you can proceed with it.
+- Leave a comment on the issue which you'd like to work on. Once a team member assigns the issue to you, you can proceed with it.
 
 OR
 
@@ -40,7 +41,7 @@ OR
 2. Clone the repository to your local machine.
 3. Setup the project following [Setup Guide](./SETUP.md).
 4. Create a new branch for your changes
-5. Make your changes and commit them with a descriptive commit messages.
+5. Make your changes and commit them with descriptive commit messages.
 6. Push your changes to your fork.
 7. Submit a pull request back to the original repository
 
@@ -51,7 +52,9 @@ OR
 
 ## 4. Commits
 
-- Following [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) (based on Angular convention)
+- Every commit must be verified using GPG keys. Reference: [here](https://medium.com/big0one/how-to-create-a-verified-commit-in-github-using-gpg-key-signature-16acee004e0f)
+
+- We are following [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) (based on Angular convention)
 
 - In brief, add either of these prefixes before a commit message,
 
@@ -74,7 +77,7 @@ OR
 
 We follow `convention over configuration`, which is a glorified way of saying "Some of the code organisation is counter-intuitive and is not optimal. But it will follow similar patterns of organisation, so as long as someone can create these mental models in their minds, the organisation becomes very clear and repeatable".
 
-- Each file is named with prefix according to its directory. Example, `node-multiplexer/nm-services/nm-providers.service.ts`.
+- Each file is named with a prefix according to its directory. Example: `node-multiplexer/nm-services/nm-providers.service.ts`.
 
   - Note the extra prefix `nm-` (here `nm` is short form for Node Multiplexer), this is intentional and can help in searching for code in IDE or github later
   - Think about how confusing it will be if there are multiple `services` directories inside multiple directories
@@ -93,7 +96,7 @@ We follow `convention over configuration`, which is a glorified way of saying "S
 
 - We are using our own Custom Logger (from `/lib/logger`), to log events (built on top of Winston to replicate NestJS like logging functionality)
 
-- Different type of files to have the filetype as suffix in name. For example, `common.constants.ts`, `cache.constants.ts`, `common.utils.ts`, `node.utils.ts`, and so on
+- Different types of files to have the filetype as a suffix in name. For example, `common.constants.ts`, `cache.constants.ts`, `common.utils.ts`, `node.utils.ts`, and so on
 
 - Wrap constants/utils/types under a namespace/module
 
@@ -132,3 +135,13 @@ Q) Why make code complicated by using node-multiplexer?
   - Add the provider in the priority array and update it in ProviderService
 
 - That's it. Now whenever we call `getTransactionsByAddress()` to node multiplexer. It will call Alchemy first. If alchemy is down, it would call the next provider in the priority.
+
+## 7. Interfaces
+
+- We have 2 interfaces (abstract classes):
+
+  - Database: The current implementation is using Clickhouse
+  - Simulation: The current implementation is using Tenderly
+
+- If a user wants to use some other implementation of database/simulation, they can easily do it by creating a new class for it and extend the database/simulation interface
+- This will also be helpful as we expand on the project and want to use multiple implementations of the interface at the same time (due to different implementation suiting better for different requirement)

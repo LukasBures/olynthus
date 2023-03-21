@@ -17,9 +17,6 @@ Arda - Risk Management for digital assets
 - [Table of Contents](#table-of-contents)
 - [Description](#description)
 - [Vision](#vision)
-  - [Product](#product)
-  - [Tech](#tech)
-  - [Coverage](#coverage)
 - [Setup](#setup)
 - [Contributing](#contributing)
 - [Questions (FAQ)](#questions-faq)
@@ -30,21 +27,13 @@ Arda - Risk Management for digital assets
 
 ## Description
 
-Safeguard allows users to make informed decisions before signing transaction. Users can understand the risks involved in a transaction such as phishing attacks, wallet drainers, rug pulls, malicious domains, and much more
+Safeguard allows users to make informed decisions before signing a transaction. Users can understand the risks involved in a transaction such as phishing attacks, wallet drainers, rug pulls, malicious domains, and much more
 
 ## Vision
 
-### Product
-
-- What more dimensions of the product we can look at?
-
-### Tech
-
-- What part of the tech can we improve?
-
-### Coverage
-
-- What more cases does the product should handle/cover (example: more chains)?
+- Product - What more dimensions of the product we can look at?
+- Tech - What part of the tech can we improve?
+- Coverage - What more cases does the product should handle/cover (example: more chains)?
 
 ## Setup
 
@@ -116,6 +105,12 @@ Please review our [Code of Conduct](./CODE_OF_CONDUCT.md) before contributing to
 - [Yathish](https://github.com/yathishram)
 - [Surya](https://github.com/SuryaAyyagari)
 - [Rishi](https://github.com/rishisundar)
+- [Sriram](https://github.com/iamsrirams)
+- [Heeth](https://github.com/heeth-arda)
+
+### Dataset Credits
+
+- [Forta](https://github.com/forta-network/labelled-datasets)
 
 ## License
 

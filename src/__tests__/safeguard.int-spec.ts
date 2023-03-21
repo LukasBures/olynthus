@@ -541,21 +541,21 @@ describe('Safeguard API', () => {
   });
 
   let etherScanMock;
-  let ardaFullNodeMock;
-  let ardaArchiveNodeMock;
+  let protectedFullNodeMock;
+  let protectedArchiveNodeMock;
   let TRANSACTION_RISK_API_REQUEST;
   let simpleHashNodeMock;
   let defillamaMock;
 
   beforeEach(() => {
     etherScanMock = intSpecHelper.setupEtherscanNodeMock();
-    ardaFullNodeMock = intSpecHelper.setupArdaFullNodeMock();
-    ardaArchiveNodeMock = intSpecHelper.setupArdaArchiveNodeMock();
+    protectedFullNodeMock = intSpecHelper.setupProtectedFullNodeMock();
+    protectedArchiveNodeMock = intSpecHelper.setupProtectedArchiveNodeMock();
     simpleHashNodeMock = intSpecHelper.setupSimpleHashNodeMock();
     defillamaMock = intSpecHelper.setupDefillamaMock();
 
-    intSpecHelper.addHealthChecksToArdaFullNodeMock(ardaFullNodeMock);
-    intSpecHelper.addHealthChecksToArdaArchiveNodeMock(ardaArchiveNodeMock);
+    intSpecHelper.addHealthChecksToProtectedFullNodeMock(protectedFullNodeMock);
+    intSpecHelper.addHealthChecksToProtectedArchiveNodeMock(protectedArchiveNodeMock);
 
     TRANSACTION_RISK_API_REQUEST = {
       transaction: {
@@ -728,7 +728,7 @@ describe('Safeguard API', () => {
           ].tokeninfo
         );
       const idArr = new Array(10).fill(0);
-      ardaFullNodeMock
+      protectedFullNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -815,7 +815,7 @@ describe('Safeguard API', () => {
         );
 
       const idArr = new Array(10).fill(0);
-      ardaFullNodeMock
+      protectedFullNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -934,7 +934,7 @@ describe('Safeguard API', () => {
           ].tokeninfo
         );
       const idArr = new Array(10).fill(0);
-      ardaFullNodeMock
+      protectedFullNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -1043,7 +1043,7 @@ describe('Safeguard API', () => {
           ].tokeninfo
         );
       const idArr = new Array(10).fill(0);
-      ardaFullNodeMock
+      protectedFullNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -1207,7 +1207,7 @@ describe('Safeguard API', () => {
         );
 
       const idArr = new Array(10).fill(0);
-      ardaFullNodeMock
+      protectedFullNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -1547,9 +1547,9 @@ describe('Safeguard API', () => {
         );
 
       const idArr = new Array(10).fill(0);
-      intSpecHelper.addHealthChecksToArdaFullNodeMock(ardaFullNodeMock, 1);
-      intSpecHelper.addHealthChecksToArdaFullNodeMock(ardaFullNodeMock, 1);
-      ardaFullNodeMock
+      intSpecHelper.addHealthChecksToProtectedFullNodeMock(protectedFullNodeMock, 1);
+      intSpecHelper.addHealthChecksToProtectedFullNodeMock(protectedFullNodeMock, 1);
+      protectedFullNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -1641,7 +1641,7 @@ describe('Safeguard API', () => {
         );
 
       const idArr = new Array(10).fill(0);
-      ardaFullNodeMock
+      protectedFullNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -1723,7 +1723,7 @@ describe('Safeguard API', () => {
         .reply(400);
 
       const idArr = new Array(10).fill(0);
-      ardaFullNodeMock
+      protectedFullNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -2157,7 +2157,7 @@ describe('Safeguard API', () => {
           ].tokeninfo
         );
       const idArr = new Array(10).fill(0);
-      ardaFullNodeMock
+      protectedFullNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -2193,7 +2193,7 @@ describe('Safeguard API', () => {
             '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
           ].tokeninfo
         );
-      ardaFullNodeMock
+      protectedFullNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -2297,7 +2297,7 @@ describe('Safeguard API', () => {
             '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
           ].tokeninfo
         );
-      ardaFullNodeMock
+      protectedFullNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -2386,7 +2386,7 @@ describe('Safeguard API', () => {
           ].tokeninfo
         );
       const idArr = new Array(10).fill(0);
-      ardaFullNodeMock
+      protectedFullNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -2499,7 +2499,7 @@ describe('Safeguard API', () => {
             '0xc0ee9db1a9e07ca63e4ff0d5fb6f86bf68d47b89'
           ].tokeninfo
         );
-      ardaFullNodeMock
+      protectedFullNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -2619,7 +2619,7 @@ describe('Safeguard API', () => {
             '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
           ].tokeninfo
         );
-      ardaFullNodeMock
+      protectedFullNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -2695,7 +2695,7 @@ describe('Safeguard API', () => {
             '0x00000000006c3852cbef3e08e8df289169ede581'
           ].tokeninfo
         );
-      ardaFullNodeMock
+      protectedFullNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -2812,7 +2812,7 @@ describe('Safeguard API', () => {
             '0x00000000006c3852cbef3e08e8df289169ede581'
           ].tokeninfo
         );
-      ardaFullNodeMock
+      protectedFullNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -2930,7 +2930,7 @@ describe('Safeguard API', () => {
             '0x00000000006c3852cbef3e08e8df289169ede581'
           ].tokeninfo
         );
-      ardaFullNodeMock
+      protectedFullNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -3019,7 +3019,7 @@ describe('Safeguard API', () => {
             '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
           ].tokeninfo
         );
-      ardaFullNodeMock
+      protectedFullNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -3056,7 +3056,7 @@ describe('Safeguard API', () => {
           ].tokeninfo
         );
 
-      ardaArchiveNodeMock
+      protectedArchiveNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -3074,7 +3074,7 @@ describe('Safeguard API', () => {
             ].eth_getCode,
         });
 
-      ardaFullNodeMock
+      protectedFullNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -3229,7 +3229,7 @@ describe('Safeguard API', () => {
             '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
           ].tokeninfo
         );
-      ardaFullNodeMock
+      protectedFullNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -3269,7 +3269,7 @@ describe('Safeguard API', () => {
           ].getsourcecode
         );
 
-      ardaFullNodeMock
+      protectedFullNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -3306,7 +3306,7 @@ describe('Safeguard API', () => {
           ].tokeninfo
         );
 
-      ardaFullNodeMock
+      protectedFullNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -3466,7 +3466,7 @@ describe('Safeguard API', () => {
             '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
           ].tokeninfo
         );
-      ardaFullNodeMock
+      protectedFullNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -3503,7 +3503,7 @@ describe('Safeguard API', () => {
           ].tokeninfo
         );
 
-      ardaArchiveNodeMock
+      protectedArchiveNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -3521,7 +3521,7 @@ describe('Safeguard API', () => {
             ].eth_getCode,
         });
 
-      ardaFullNodeMock
+      protectedFullNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -3659,7 +3659,7 @@ describe('Safeguard API', () => {
             '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
           ].tokeninfo
         );
-      ardaFullNodeMock
+      protectedFullNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -3709,7 +3709,7 @@ describe('Safeguard API', () => {
             '0xdac17f958d2ee523a2206206994597c13d831ec7'
           ].tokeninfo
         );
-      ardaFullNodeMock
+      protectedFullNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -3746,7 +3746,7 @@ describe('Safeguard API', () => {
           ].tokeninfo
         );
 
-      ardaFullNodeMock
+      protectedFullNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -3896,7 +3896,7 @@ describe('Safeguard API', () => {
             '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
           ].tokeninfo
         );
-      ardaFullNodeMock
+      protectedFullNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -3933,7 +3933,7 @@ describe('Safeguard API', () => {
           ].tokeninfo
         );
 
-      ardaFullNodeMock
+      protectedFullNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -4048,7 +4048,7 @@ describe('Safeguard API', () => {
             '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
           ].tokeninfo
         );
-      ardaFullNodeMock
+      protectedFullNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -4109,7 +4109,7 @@ describe('Safeguard API', () => {
             '0xdac17f958d2ee523a2206206994597c13d831ec7'
           ].tokeninfo
         );
-      ardaFullNodeMock
+      protectedFullNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (
@@ -4146,7 +4146,7 @@ describe('Safeguard API', () => {
           ].tokeninfo
         );
 
-      ardaFullNodeMock
+      protectedFullNodeMock
         .post('/', (body) => {
           idArr[0] = body.id;
           return (

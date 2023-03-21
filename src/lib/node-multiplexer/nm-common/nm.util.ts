@@ -4,15 +4,15 @@ import { Chains, Networks, NodeConstants } from './nm.constants';
 dotenv.config();
 
 export namespace NodeUtils {
-  export const ARDA_FULL_NODE = {
+  export const PROTECTED_FULL_NODE = {
     ETHEREUM: {
-      MAINNET: process.env.NODE_ARDA_FULL_NODE_ETH_MAINNET,
+      MAINNET: process.env.NODE_PROTECTED_FULL_NODE_ETH_MAINNET,
     },
   };
 
-  export const ARDA_ARCHIVE_NODE = {
+  export const PROTECTED_ARCHIVE_NODE = {
     ETHEREUM: {
-      MAINNET: process.env.NODE_ARDA_ARCHIVE_NODE_ETH_MAINNET,
+      MAINNET: process.env.NODE_PROTECTED_ARCHIVE_NODE_ETH_MAINNET,
     },
   };
 
@@ -54,8 +54,8 @@ export namespace NodeUtils {
       TESTNET: process.env.SCAN_BSCSCAN_TESTNET,
     },
     POLYGON: {
-      MAINNET: process.env.SCAN_POLYGON_MAINNET,
-      TESTNET: process.env.SCAN_POLYGON_TESTNET,
+      MAINNET: process.env.SCAN_POLYGONSCAN_MAINNET,
+      TESTNET: process.env.SCAN_POLYGONSCAN_MUMBAI,
     },
   };
 
@@ -85,15 +85,15 @@ export namespace NodeUtils {
     PER_MS: 1000,
   };
 
-  export function getArdaFullNodeHttpUrl(chain: Chains, network: Networks) {
+  export function getProtectedFullNodeHttpUrl(chain: Chains, network: Networks) {
     if (chain === Chains.ETHEREUM && network === Networks.MAINNET) {
-      return NodeUtils.ARDA_FULL_NODE.ETHEREUM.MAINNET;
+      return NodeUtils.PROTECTED_FULL_NODE.ETHEREUM.MAINNET;
     }
   }
 
-  export function getArdaArchiveNodeHttpUrl(chain: Chains, network: Networks) {
+  export function getProtectedArchiveNodeHttpUrl(chain: Chains, network: Networks) {
     if (chain === Chains.ETHEREUM && network === Networks.MAINNET) {
-      return NodeUtils.ARDA_ARCHIVE_NODE.ETHEREUM.MAINNET;
+      return NodeUtils.PROTECTED_ARCHIVE_NODE.ETHEREUM.MAINNET;
     }
   }
 
@@ -114,7 +114,9 @@ export namespace NodeUtils {
       return NodeUtils.ANKR_NODE.ETHEREUM[network];
     } else if (chain === Chains.BSC) {
       return NodeUtils.ANKR_NODE.BSC[network];
-    }
+    } else if (chain === Chains.POLYGON) {
+      return NodeUtils.ANKR_NODE.POLYGON[network];
+    } else return '';
   }
 
   export function getChainNativeCurrency(chain: Chains): NodeConstants.Currencies {

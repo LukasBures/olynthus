@@ -6,7 +6,7 @@ on:
     #Run this workflow when a PR is opened/reopened/synchronized on main branch
     branches:
       - main
-      - staging
+      - release
 
 jobs:
   Format-Lint-UnitTest:

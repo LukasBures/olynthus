@@ -3,7 +3,7 @@
 ## Guidelines
 
 - Every issue will be mapped with a single Pull Request (i.e 1 Pull Request for 1 Issue)
-- Go through the open issues (filter with `Status: TODO`, and `Domain: XXXXXX`), to check if your issue has been already been addresses earlier
+- Go through the open issues (filter with `Status: TODO`, and `Domain: XXXXXX`), to check if your issue has been already been addressed earlier
 - If an existing issue doesn't exist, please go through the Issue Lifecycle first to understand about the stages an issue goes through
 - Lastly, to create a new issue, please visit the [Issues Section](https://github.com/Arda-finance/olynthus/issues)
 
@@ -20,8 +20,8 @@
   - `Type: Discussion` - A discussion
   - `Type: Documentation` - Documentation
   - `Type: Feature Request` - A new feature/functionality
-  - `Type: Question` - Query/question regarding th product/code
-  - `Type: Security` - Vulnerability/security relate issue
+  - `Type: Question` - Query/question regarding the product/code
+  - `Type: Security` - Vulnerability/security related issue
 
 ### Stage 2
 
@@ -40,7 +40,7 @@
 
 ### Stage 3
 
-- Once an Issue is confirmed by `Resolution: Confirmed`, it goes to next step i.e making the changes required.
+- Once an Issue is confirmed by `Resolution: Confirmed`, it goes to the next step i.e making the changes required.
 - The team will assign the issue to anyone who is willing to make the necessary changes
 - The team will also assign new labels to the issue accordingly. Following are the labels assigned at this stage,
 
@@ -50,7 +50,7 @@
 
   - Vision:
 
-    - `Vision: Coverage` - What more cases does the product should handle/cover?
+    - `Vision: Coverage` - What more cases should the product handle/cover?
     - `Vision: Tech` - What part of the tech can we improve?
     - `Vision: Product` - What more dimensions of product we can look at?
 

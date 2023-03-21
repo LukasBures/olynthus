@@ -5,7 +5,7 @@ on:
     #Run this workflow when a PR is opened/reopened/synchronized on main branch
     branches:
       - main
-      - 0.1.x
+      - release
 
 jobs:
   Integration-Tests:

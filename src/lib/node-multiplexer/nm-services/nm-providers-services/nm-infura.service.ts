@@ -21,12 +21,12 @@ export class NodeInfuraProviderService extends NodeProviderServiceBase {
 
   async isActive(): Promise<boolean> {
     try {
-      await this.web3?.eth.getBlockNumber();
-      return true;
+      const result = await this.web3?.eth.net.isListening();
+      return result;
     } catch (error) {
       this.logger.error(
-        `infura provider is not active for chain ${this.chain} & network ${this.network}`,
-        error.stack
+        error,
+        `infura provider is not active for chain ${this.chain} & network ${this.network}`
       );
       return false;
     }

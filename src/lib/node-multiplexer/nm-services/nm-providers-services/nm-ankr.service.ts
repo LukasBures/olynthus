@@ -19,19 +19,19 @@ export class NodeAnkrProviderService extends NodeProviderServiceBase {
     this.initProvider(this.httpProviderUrl);
   }
 
-  // doesn't exist for current plan
+  // doesn't exist for free plan
   getWebSocketProviderUrl(): string {
     return undefined;
   }
 
   async isActive(): Promise<boolean> {
     try {
-      await this.web3?.eth.getBlockNumber();
-      return true;
+      const result = await this.web3?.eth.net.isListening();
+      return result;
     } catch (error) {
       this.logger.error(
-        `ankr provider is not active for chain ${this.chain} & network ${this.network}`,
-        error.stack
+        error,
+        `ankr provider is not active for chain ${this.chain} & network ${this.network}`
       );
       return false;
     }

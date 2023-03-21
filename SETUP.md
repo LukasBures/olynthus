@@ -93,12 +93,33 @@
   ```sql
   CREATE DATABASE dataset;
   CREATE DATABASE ethereum_mainnet;
+  CREATE DATABASE bsc_mainnet;
+  CREATE DATABASE polygon_mainnet;
+
   ```
 
 - Create tables
 
   ```sql
   CREATE TABLE ethereum_mainnet.malicious_counterparty(
+      address String,
+      tags Array(String),
+      contract_creator String,
+      labels Array(String)
+  )
+  ENGINE = MergeTree
+  PRIMARY KEY address;
+
+  CREATE TABLE bsc_mainnet.malicious_counterparty(
+      address String,
+      tags Array(String),
+      contract_creator String,
+      labels Array(String)
+  )
+  ENGINE = MergeTree
+  PRIMARY KEY address;
+
+  CREATE TABLE polygon_mainnet.malicious_counterparty(
       address String,
       tags Array(String),
       contract_creator String,
@@ -129,6 +150,8 @@
 
   ```bash
   $ ./clickhouse client -q "INSERT INTO ethereum_mainnet.malicious_counterparty FORMAT CSVWithNames" < ethereum_malicious_counterparty.csv
+
+  # we have no data of malicious_counterparty for BSC & POLYGON, yet. will update it here once we have the dataset ready
 
   $ ./clickhouse client -q "INSERT INTO dataset.malicious_domains FORMAT CSVWithNames" < malicious_domains.csv
 
