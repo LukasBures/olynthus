@@ -87,7 +87,7 @@ We follow `convention over configuration`, which is a glorified way of saying "S
 - Any interaction with the blockchain must be done from `lib/node-multiplexer`
 
   - This makes node multiplexer as a black-box, which can be extended upon by adding other nodes.
-  - Prefer Alchemy instead of Ankr? You only need to make the change within the node-multiplexer, and the rest of the code remains the same
+  - Prefer some other provider instead of currently added providers? You only need to make the change within the node-multiplexer, and the rest of the code remains the same
   - More on Node Multiplexer's design is given in [5.2 Node Multiplexer](#52-node-multiplexer)
 
   ```
@@ -108,33 +108,33 @@ We follow `convention over configuration`, which is a glorified way of saying "S
 
 - Diagrammatic Representation
   <div>
-    <img width="500" src="https://user-images.githubusercontent.com/106659572/216564908-ef728a12-24f6-46ff-ae4e-b8d3e2a9e389.png">
+    <img width="500" src="https://user-images.githubusercontent.com/106659572/227126545-a49712da-0fd9-4bcc-b42d-0b7f0185812c.png">
   </div>
 
 Q) Why make code complicated by using node-multiplexer?
 
 **Case 1:**
 
-- Lets say that we no longer want to use alchemy completely as we found out a better alternative for it.
+- Lets say that we no longer want to use ProviderABC completely as we found out a better alternative for it.
 
 - The steps to update the code would be:
 
   - Create a new provider inside node multiplexer
   - Add the provider in the priority array and update it in ProviderService
-  - Delete alchemy provider
+  - Delete ProviderABC provider
 
 - In this way, node-multiplexer becomes a black-box, and we don't need to make any changes outside of node multiplexer
 
 **Case 2:**
 
-- We need a backup of Alchemy for `getTransactionsByAddress()`, as we find that Alchemy down every few days for few hours. Here node multiplexer would be helpful.
+- We need a backup of ProviderABC for `getTransactionsByAddress()`, as we find some issues with the ProviderABC. Here node multiplexer would be helpful.
 
 - The steps would be:
 
-  - Add a new provider (backup of alchemy)
+  - Add a new provider (backup of ProviderABC)
   - Add the provider in the priority array and update it in ProviderService
 
-- That's it. Now whenever we call `getTransactionsByAddress()` to node multiplexer. It will call Alchemy first. If alchemy is down, it would call the next provider in the priority.
+- That's it. Now whenever we call `getTransactionsByAddress()` to node multiplexer. It will call ProviderABC first. If ProviderABC is down, it would call the next provider in the priority.
 
 ## 7. Interfaces
 

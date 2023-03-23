@@ -1,7 +1,7 @@
 ---
 name: '🔐 Security'
-about: Security issues/vulnerabilities
-title: 'Security: '
+about: Security issues/vulnerabilities/discussion
+title: '🔐 Security: '
 labels: 'Type: Security'
 assignees: ''
 ---

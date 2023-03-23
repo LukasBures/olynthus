@@ -1,7 +1,7 @@
 ---
 name: '🤔 Questions & Help'
 about: Query/question regarding the product/code
-title: 'Question: '
+title: '🤔 Question: '
 labels: 'Type: Question'
 assignees: ''
 ---

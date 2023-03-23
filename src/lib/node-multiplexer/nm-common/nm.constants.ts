@@ -196,7 +196,6 @@ export namespace NodeConstants {
     PROTECTED_FULL_NODE = 'protected_full_node',
     PROTECTED_ARCHIVE_NODE = 'protected_archive_node',
     INFURA_NODE = 'infura_node',
-    ALCHEMY_NODE = 'alchemy_node',
     ANKR_NODE = 'ankr_node',
     BLOCKCHAIN_SCAN = 'blockchain_scan',
     ARCHIVE_NODE_IO_NODE = 'archive_node_io_node',

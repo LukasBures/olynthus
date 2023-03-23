@@ -38,6 +38,8 @@ export class TenderlyService extends SimulationInterface {
         network
       );
 
+      if (simulationResponse.error) return simulationResponse.error;
+
       // decode the details from the simulation result (in parent class)
       return await this.decodeSimulationResult(
         simulationResponse,
@@ -97,16 +99,20 @@ export class TenderlyService extends SimulationInterface {
         if (error.response.data.error.slug === 'intent_execution_not_allowed') {
           // swallow rate limit errors and return SUCCESS (making the API best-effor basis)
           return {
-            status: CommonConstants.SafeguardSimulationStatusType.SUCCESS,
-            failure_text: '',
-            balances: [],
+            error: {
+              status: CommonConstants.SafeguardSimulationStatusType.SUCCESS,
+              failure_text: '',
+              balances: [],
+            },
           };
         }
 
         return {
-          status: CommonConstants.SafeguardSimulationStatusType.FAILURE,
-          failure_text: error.response.data.error.message,
-          balances: [],
+          error: {
+            status: CommonConstants.SafeguardSimulationStatusType.FAILURE,
+            failure_text: error.response.data.error.message,
+            balances: [],
+          },
         };
       }
     }

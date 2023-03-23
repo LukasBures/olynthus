@@ -1,7 +1,7 @@
 ---
 name: '🐞 Bug Report'
 about: Create a report for bug
-title: 'Bug: '
+title: '🐞 Bug: '
 labels: 'Type: Bug'
 assignees: ''
 ---

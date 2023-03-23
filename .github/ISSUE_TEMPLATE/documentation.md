@@ -1,7 +1,7 @@
 ---
-name: '📋 Documentation Issue'
-about: Any documentation related issues
-title: 'Documentation: '
+name: '📋 Documentation'
+about: Any documentation related issues/changes/help
+title: '📋 Documentation: '
 labels: 'Type: Documentation'
 assignees: ''
 ---

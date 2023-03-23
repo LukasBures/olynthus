@@ -16,6 +16,9 @@ Arda - Risk Management for digital assets
 
 - [Table of Contents](#table-of-contents)
 - [Description](#description)
+  - [What is Safeguard (code name Olynthus)?](#what-is-safeguard-code-name-olynthus)
+  - [Why do we need Safeguard?](#why-do-we-need-safeguard)
+  - [How does Safeguard solve the above problem?](#how-does-safeguard-solve-the-above-problem)
 - [Vision](#vision)
 - [Setup](#setup)
 - [Contributing](#contributing)
@@ -23,11 +26,30 @@ Arda - Risk Management for digital assets
 - [Issues](#issues)
 - [Code of Conduct](#code-of-conduct)
 - [Credits](#credits)
+  - [Team](#team)
+  - [Dataset](#dataset)
 - [License](#license)
 
 ## Description
 
-Safeguard allows users to make informed decisions before signing a transaction. Users can understand the risks involved in a transaction such as phishing attacks, wallet drainers, rug pulls, malicious domains, and much more
+### What is Safeguard (code name Olynthus)?
+
+- Olynthus is the codebase name for the project, Safeguard.
+- Safeguard is an open source project by Arda which can be used to provide transaction insights for your on chain activity in real time and help you safeguard against loosing out on the assets.
+
+### Why do we need Safeguard?
+
+- Let us assume a user wants to transfer 100 USD Coin to another address (X) via a web app / smart contract
+  The web app / smart contract would generate a request which the user must confirm to proceed
+- If the web app /smart contract is trustworthy (source code is publicly available and is audited), we can be rest assured that it will indeed transfer 100 USD Coin to address X
+- But, if the web app / smart contract is malicious and the source code is not publicly available (like for most of the smart contracts available on the blockchain), it might show the request as transferring 100 USD Coin to X, but in reality, it might transfer all of our USD Coin to their own address (Y) and drain us of our tokens
+
+### How does Safeguard solve the above problem?
+
+- Safeguard will allow users to identify these types of risks by decoding the transaction request before confirming the transaction
+- If any suspicious / risky movements are observed in the transaction request, Safeguard will inform the user before confirming the transaction, so the user can decide if they really want to proceed or not!
+- Safeguard provides these analysis as **APIs** which wallets, and providers can integrate with. Here is a short demo from Arda's Metamask Snap (Wallet integrated with Safeguard APIs), which would warn the users about the risks involved:
+  ![safeguard demo](https://user-images.githubusercontent.com/106659572/226905051-ea77c5ea-49bc-4fe0-bd51-939045835510.gif)
 
 ## Vision
 
@@ -45,9 +67,28 @@ We welcome contributions from anyone interested in improving this project. Pleas
 
 ## Questions (FAQ)
 
-<b>How do we identify risks?</b>
+**Q. How are risks identified?**
 
-- Based on the website the transaction is taking place, transaction payload (`to`, `data` params), and our dataset, we determine what category of the risk the transaction falls into
+The following parameters are considered:
+
+1. Web App / URL the transaction is taking place on,
+
+   - We maintain a dataset of malicious domains, and check if the url matches with the same
+
+2. `to` address of the transaction
+
+   - We maintain a dataset of malicious counterparty, and check if the`to` address matches with the same
+   - We also categorize the transaction type based on the type of `to`address (Wallet/Contract/ERC-Token)
+
+3. `data` input params of the transaction
+
+   - We decode to analyze what smart contract function is being called, and what arguments are passed to the function
+
+4. Transaction simulation
+
+   - This is the final step of analysis, since if we miss to identify any risk from the above 3 steps, this step would take care of it!
+   - We run the transaction in a virtual environment, which give us the transaction event logs.
+   - Using the event logs, we can identify what would happen if the transaction was approved, i.e the aftermath of the transaction taking place
 
 - Transactions are classified into the following types:
 
@@ -102,13 +143,15 @@ Please review our [Code of Conduct](./CODE_OF_CONDUCT.md) before contributing to
 
 ## Credits
 
+### Team
+
 - [Yathish](https://github.com/yathishram)
 - [Surya](https://github.com/SuryaAyyagari)
 - [Rishi](https://github.com/rishisundar)
 - [Sriram](https://github.com/iamsrirams)
 - [Heeth](https://github.com/heeth-arda)
 
-### Dataset Credits
+### Dataset
 
 - [Forta](https://github.com/forta-network/labelled-datasets)
 

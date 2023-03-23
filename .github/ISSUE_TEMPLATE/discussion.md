@@ -1,7 +1,7 @@
 ---
 name: '💬 Discussion'
 about: Open ended conversation not related to any other type
-title: 'Discussion: '
+title: '💬 Discussion: '
 labels: 'Type: Discussion'
 assignees: ''
 ---
